@@ -1,0 +1,88 @@
+﻿@{ ViewData["Title"] = "Home Page"; }
+@using System.Linq
+@model Whiskies.Models.Collection
+
+<div class="text-center">
+    <h1 class="display-4">@Model.Intro</h1>
+    
+    <div style="text-align:left; width: 85%; margin: 0 auto;">
+        @foreach (var item in Model.Rich.Content)
+        {
+            @if (item.content != null)
+            {
+                @if (item.Type == "paragraph")
+                {
+                    <div>
+                    @foreach (var element in item.content)
+                    {
+                        @if (element.Marks != null)
+                        {
+                            @if (element.Marks.Any(m => m.Type == "bold"))
+                            {
+                                <span style="font-weight: bold">@element.Text</span>
+                            }
+                            else if (element.Marks.Any(m => m.Type == "link"))
+                            {
+                                var link = element.Marks.First(m => m.Type == "link");
+                                string className = link.Attrs.Class==null ? "" : link.Attrs.Class.ToString();
+
+                                    <a class="@className" href="@link.Attrs.Href" target="@link.Attrs.Target">@element.Text</a>
+                            }
+                            else
+                            {
+                                <span>@element.Text</span>
+                            }
+                        }
+                        else
+                        {
+                            <span>@element.Text</span>
+                        }
+                    }
+                    </div>
+                }
+            }
+            else
+            {
+                <br/>
+            }
+        }
+        
+        <p>
+            <div class="grid-container">
+                @foreach (var whisky in Model.Items.Results)
+                {
+                    string years = whisky.Years is > 0 ? $"({whisky.Years})" : "";
+
+                    <a class="link" href="/Whisky/@whisky.id">
+                        <div class="grid-item">
+                            <div><span class='title'>@whisky.Vendor @whisky.Brand</span> <span style="color: grey">@years</span></div>
+                            <div>
+                                <img src="@whisky.Picture.Results[0].FileUrl?w=300&h=400" width="300" alt="@whisky.Picture.Results[0].Name" />
+                            </div>
+                        </div>
+                    </a>
+                }
+            </div>
+        </p>
+    </div>
+</div>
+
+<style>
+    .link { text-decoration: none; color: black; font-size: 28px; }
+    .title {
+        text-decoration: none !important;
+        color: black;
+    }
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-gap: 10px;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .grid-item {
+        background-color: #f2f2f2;
+        padding: 0px 20px 20px 20px;
+    }
+</style>

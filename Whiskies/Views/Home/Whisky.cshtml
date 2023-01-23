@@ -1,0 +1,42 @@
+﻿@{ ViewData["Title"] = "Whisky"; }
+@using Whiskies.Helpers
+@model Whiskies.Models.Whisky
+
+
+
+@{
+    if (Model == null)
+    {
+        <h2>Item not found</h2>
+        return;
+    }
+
+    string years = Model.Years is > 0 ? $"({Model.Years})" : "";
+}
+
+<h1><span>@Model.Vendor @Model.Brand</span> <span>@years</span></h1>
+
+<div id="container">
+    @if (Model.Picture.Results.Any())
+    {
+        <img class="image" src="@Model.Picture.Results[0].FileUrl" width="300" alt="@Model.Picture.Results[0].Name"/>
+    }
+    <div class="flex">@Html.ToParagraphs(Model.Description)</div>
+</div>
+
+
+
+@if(Model.Video.Results.Any())
+{
+    <p>
+        <video width="100%" style="margin-top: 20px;" controls>
+            <source src="@Model.Video.Results[0].FileUrl" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </p>
+}
+<style>
+    .container { overflow: auto; }
+    .image { float: left; width: 300px; margin-right: 20px; }
+    .text { clear: both; }
+</style>
